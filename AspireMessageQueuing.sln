@@ -6,7 +6,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireMessageQueuing.AppHos
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspireMessageQueuing.ServiceDefaults", "AspireMessageQueuing.ServiceDefaults\AspireMessageQueuing.ServiceDefaults.csproj", "{F7DA7964-A267-3273-D56E-CD32683E2490}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQWorkerService", "WorkerService\RabbitMQWorkerService.csproj", "{48D1988F-AA1B-3E5B-C53F-B584F25BB2F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerService", "WorkerService\WorkerService.csproj", "{48D1988F-AA1B-3E5B-C53F-B584F25BB2F7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Contracts", "Contracts\Contracts.csproj", "{B0F8E56D-5F32-4B97-91B2-B4C73750E657}"
 EndProject

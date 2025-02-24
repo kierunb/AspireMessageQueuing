@@ -20,7 +20,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WebApiMessageQueues\WebApiMessageQueues.csproj" />
-    <ProjectReference Include="..\WorkerService\RabbitMQWorkerService.csproj" />
+    <ProjectReference Include="..\WorkerService\WorkerService.csproj" />
   </ItemGroup>
 
 </Project>
