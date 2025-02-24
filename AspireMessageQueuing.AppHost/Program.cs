@@ -12,9 +12,14 @@ var rabbitmq = builder.AddRabbitMQ("RabbitMQ")
     .WithManagementPlugin()
     .WithLifetime(ContainerLifetime.Persistent);
 
-var workerService = builder.AddProject<Projects.WorkerService>("WorkerService")
+//var kafka = builder.AddKafka("Kafka")
+//    .WithLifetime(ContainerLifetime.Persistent);
+
+
+var workerService = builder.AddProject<Projects.RabbitMQWorkerService>("RabbitMQWorkerService")
     .WithReference(rabbitmq)
-    .WaitFor(rabbitmq);
+    .WaitFor(rabbitmq)
+    .WithReplicas(2);
 
 var webApi = builder.AddProject<Projects.WebApiMessageQueues>("WebApi")
     .WithReference(rabbitmq)
