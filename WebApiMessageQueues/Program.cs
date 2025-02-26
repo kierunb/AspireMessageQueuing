@@ -1,8 +1,14 @@
+using AspireMessageQueuing.ServiceDefaults;
+using Contracts;
 using MassTransit;
 using Scalar.AspNetCore;
 using WebApiMessageQueues.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
+var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
+
+bool withRabbitMQ = Constants.WithRabbitMQ;
+bool withKafka = Constants.WithKafka;
 
 builder.AddServiceDefaults();
 
@@ -19,21 +25,40 @@ builder.Services.AddMassTransit(x =>
     // By default, sagas are in-memory, but should be changed to a durable
     // saga repository.
     x.SetInMemorySagaRepositoryProvider();
-
-    var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
-
     x.AddConsumers(entryAssembly);
     x.AddSagaStateMachines(entryAssembly);
     x.AddSagas(entryAssembly);
     x.AddActivities(entryAssembly);
 
-    x.UsingRabbitMq((context, cfg) =>
+    if (withRabbitMQ)
     {
-        cfg.Host(builder.Configuration.GetConnectionString("RabbitMQ"));
+        // RabbitMQ
+        x.UsingRabbitMq(
+            (context, cfg) =>
+            {
+                cfg.Host(builder.Configuration.GetConnectionString(Constants.RabbitMQConnectionName));
+                cfg.ConfigureEndpoints(context);
+            }
+        );
+    }
 
-        cfg.ConfigureEndpoints(context);
-    });
+    if (withKafka)
+    {
+        // Kafka
+        x.AddRider(rider =>
+        {
+            rider.AddProducer<KafkaMessage>(topicName: Constants.KafkaTopicName);
+
+            rider.UsingKafka(
+                (context, k) =>
+                {
+                    k.Host(builder.Configuration.GetConnectionString(Constants.KafkaConnectionName));
+                }
+            );
+        });
+    } 
 });
+
 
 var app = builder.Build();
 
@@ -52,5 +77,3 @@ app.UseHttpsRedirection();
 app.MapEndpoints();
 
 app.Run();
-
-

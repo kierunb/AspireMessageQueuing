@@ -1,24 +1,23 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-// kafka:
-// dotnet add package Aspire.Hosting.Kafka
-// https://learn.microsoft.com/en-us/dotnet/aspire/messaging/kafka-integration?tabs=dotnet-cli
-
-// postgres:
-// dotnet add package Aspire.Hosting.PostgreSQL
-// https://learn.microsoft.com/en-us/dotnet/aspire/database/postgresql-entity-framework-integration?tabs=dotnet-cli
-
-var rabbitmq = builder.AddRabbitMQ("RabbitMQ")
+var rabbitmq = builder.AddRabbitMQ(name: "rabbit-mq")
     .WithManagementPlugin()
     .WithLifetime(ContainerLifetime.Persistent);
 
-var workerService = builder.AddProject<Projects.WorkerService>("WorkerService")
-    .WithReference(rabbitmq)
-    .WaitFor(rabbitmq);
+var kafka = builder.AddKafka(name: "kafka")
+    .WithKafkaUI()
+    .WithLifetime(ContainerLifetime.Persistent);
 
-var webApi = builder.AddProject<Projects.WebApiMessageQueues>("WebApi")
+var workerService = builder.AddProject<Projects.WorkerService>(name: "worker-service")
     .WithReference(rabbitmq)
+    .WithReference(kafka)
     .WaitFor(rabbitmq)
+    .WaitFor(kafka)
+    .WithReplicas(replicas: 1);
+
+var webApi = builder.AddProject<Projects.WebApiMessageQueues>(name: "web-api")
+    .WithReference(rabbitmq)
+    .WithReference(kafka)
     .WaitFor(workerService);
 
 builder.Build().Run();
