@@ -7,8 +7,8 @@ using WebApiMessageQueues.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
 
-bool withRabbitMQ = true;
-bool withKafka = true;
+bool withRabbitMQ = Constants.WithRabbitMQ;
+bool withKafka = Constants.WithKafka;
 
 builder.AddServiceDefaults();
 
@@ -25,7 +25,6 @@ builder.Services.AddMassTransit(x =>
     // By default, sagas are in-memory, but should be changed to a durable
     // saga repository.
     x.SetInMemorySagaRepositoryProvider();
-
     x.AddConsumers(entryAssembly);
     x.AddSagaStateMachines(entryAssembly);
     x.AddSagas(entryAssembly);
@@ -38,7 +37,6 @@ builder.Services.AddMassTransit(x =>
             (context, cfg) =>
             {
                 cfg.Host(builder.Configuration.GetConnectionString(Constants.RabbitMQConnectionName));
-
                 cfg.ConfigureEndpoints(context);
             }
         );

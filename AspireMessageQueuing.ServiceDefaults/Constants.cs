@@ -7,4 +7,7 @@ public static class Constants
 
     public const string KafkaTopicName = "topic1";
     public const string KafkaGroupId = "group1";
+
+    public const bool WithRabbitMQ = true;
+    public const bool WithKafka = true;
 }
